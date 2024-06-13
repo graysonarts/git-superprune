@@ -7,7 +7,7 @@ use const_format::formatcp;
 use git2::Repository;
 use git_version::git_version;
 use tracing::{debug, info};
-use tracing_subscriber::field::debug;
+
 
 mod branch;
 

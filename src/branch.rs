@@ -33,10 +33,7 @@ impl BranchList for Repository {
             let upstream = branch.upstream();
             let gone = match upstream {
                 Ok(_) => false,
-                Err(e) => match e.class() {
-                    git2::ErrorClass::Reference => true,
-                    _ => false,
-                },
+                Err(e) => matches!(e.class(), git2::ErrorClass::Reference),
             };
             let name = branch.name();
             if name.is_err() {
@@ -59,10 +56,6 @@ impl BranchList for Repository {
         }
         output
     }
-}
-
-pub fn get_branches(repo: &dyn BranchList) -> Vec<Branch> {
-    repo.get_branches()
 }
 
 #[cfg(test)]
@@ -140,27 +133,30 @@ mod tests {
         assert_eq!(gone_branch_count, 4);
     }
 
+    #[cfg(feature = "extended_tests")]
     #[test]
     fn repository_branch_output() {
-        let repo = Repository::open("../elka").expect("Unable to open repository");
+        let repo = Repository::open("../test_branch").expect("Unable to open repository");
         let branches = repo.get_branches();
         assert_eq!(branches.len(), 6);
         let gone_branch_count = branches.iter().filter(|b| b.gone).count();
         assert_eq!(gone_branch_count, 2);
     }
 
+    #[cfg(feature = "extended_tests")]
     #[test]
     fn can_read_main_branch() {
-        let repo = Repository::open("../elka").expect("Unable to open repository");
+        let repo = Repository::open("../test_branch").expect("Unable to open repository");
         let branches = repo.get_branches();
         let main_branch = branches.iter().find(|b| b.current);
         assert!(main_branch.is_some());
         assert_eq!(main_branch.unwrap().name.as_str(), "main");
     }
 
+    #[cfg(feature = "extended_tests")]
     #[test]
     fn can_read_commit() {
-        let repo = Repository::open("../elka").expect("Unable to open repository");
+        let repo = Repository::open("../test_branch").expect("Unable to open repository");
         let branches = repo.get_branches();
         let main_branch = branches.iter().find(|b| b.current);
         assert!(main_branch.is_some());
