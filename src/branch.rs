@@ -127,7 +127,7 @@ mod tests {
 
     #[test]
     fn test_get_branches() {
-        let branches = get_branches(&MockBranchList);
+        let branches = &MockBranchList.get_branches();
         assert_eq!(branches.len(), 9);
         let gone_branch_count = branches.iter().filter(|b| b.gone).count();
         assert_eq!(gone_branch_count, 4);
