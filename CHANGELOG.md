@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/graysonarts/git-superprune/compare/v0.1.1...v0.1.2) - 2024-06-17
+
+### Fixed
+- let git_version not fail when installed via cargo
+
+### Other
+- clean up dead-code warnings
+- add release-plz workflow
+
 ## [0.1.1](https://github.com/graysonarts/git-superprune/compare/v0.1.0...v0.1.1) - 2024-06-13
 
 ### Other
