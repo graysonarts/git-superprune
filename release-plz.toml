@@ -1,0 +1,6 @@
+[workspace]
+git_release_enable = true
+semver_check = true
+
+[changelog]
+protect_breaking_commits = true
