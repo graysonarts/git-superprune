@@ -8,10 +8,13 @@ use git2::Repository;
 use git_version::git_version;
 use tracing::{debug, info};
 
-
 mod branch;
 
-const GIT_VERSION: &str = git_version!();
+const GIT_VERSION: &str = git_version!(
+    prefix = "git:",
+    cargo_prefix = "cargo:",
+    fallback = "unknown"
+);
 const CRATE_VERSION: &str = env!("CARGO_PKG_VERSION");
 const VERSION: &str = formatcp!("v{CRATE_VERSION} ({GIT_VERSION})");
 
