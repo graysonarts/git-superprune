@@ -3,9 +3,9 @@ use git2::{BranchType, Oid, Repository};
 #[derive(Debug)]
 pub struct Branch {
     pub name: String,
-    pub commit: String,
+    pub _commit: String,
     pub gone: bool,
-    pub current: bool,
+    pub _current: bool,
 }
 
 pub trait BranchList {
@@ -48,9 +48,9 @@ impl BranchList for Repository {
 
             let branch = Branch {
                 name: name.to_string(),
-                commit: commit.to_string().as_str()[0..8].to_string(),
+                _commit: commit.to_string().as_str()[0..8].to_string(),
                 gone,
-                current,
+                _current: current,
             };
             output.push(branch);
         }
@@ -69,57 +69,57 @@ mod tests {
             vec![
                 Branch {
                     name: "master".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: false,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/1".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: false,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/2".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: false,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/3".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: false,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/4".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: false,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/5".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: true,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/6".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: true,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/7".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: true,
-                    current: false,
+                    _current: false,
                 },
                 Branch {
                     name: "feature/8".to_string(),
-                    commit: "todo".to_string(),
+                    _commit: "todo".to_string(),
                     gone: true,
-                    current: false,
+                    _current: false,
                 },
             ]
         }
