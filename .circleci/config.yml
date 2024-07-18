@@ -58,7 +58,7 @@ jobs:
       - image: cimg/rust:1.79.0
     steps:
       - cargo_step:
-          args: deny
+          args: deny check
 workflows:
   PR:
     jobs:
