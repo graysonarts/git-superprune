@@ -1,0 +1,74 @@
+version: 2.1
+commands:
+  cargo_step:
+    parameters:
+      args:
+        type: string
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - rust-deps-{{ checksum "Cargo.lock" }}
+            - rust-tools-
+      - run:
+          name: Run cargo << parameters.args >>
+          command: cargo << parameters.args >>
+      - save_cache:
+          key: rust-deps-{{ checksum "Cargo.lock" }}
+          paths:
+            - ~/.cargo
+
+jobs:
+  install_tools:
+    docker:
+      - image: cimg/rust:1.79.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - rust-deps-{{ checksum "Cargo.lock" }}
+            - rust-tools-
+      - run:
+          name: Install binstall
+          command: cargo install --locked cargo-binstall
+      - run:
+          name: Binstall cargo-audit
+          command: cargo binstall --locked -y cargo-audit
+      - run:
+          name: Binstall cargo-deny
+          command: cargo binstall --locked -y cargo-deny
+      - save_cache:
+          key: rust-tools-
+          paths:
+            - ~/.cargo
+  check:
+    docker:
+      - image: cimg/rust:1.79.0
+    steps:
+      - cargo_step:
+          args: check
+  audit:
+    docker:
+      - image: cimg/rust:1.79.0
+    steps:
+      - cargo_step:
+          args: audit
+  deny:
+    docker:
+      - image: cimg/rust:1.79.0
+    steps:
+      - cargo_step:
+          args: deny check
+workflows:
+  PR:
+    jobs:
+      - install_tools
+      - audit:
+          requires:
+            - install_tools
+      - deny:
+          requires:
+            - install_tools
+      - check:
+          requires:
+            - install_tools
