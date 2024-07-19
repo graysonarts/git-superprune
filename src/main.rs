@@ -1,10 +1,10 @@
-use std::sync::atomic::AtomicU8;
+use std::{env, sync::atomic::AtomicU8};
 
 use branch::BranchList;
 use clap::Parser;
 use color_eyre::Result;
 use const_format::formatcp;
-use git2::Repository;
+use git2::{Cred, Repository};
 use git_version::git_version;
 use tracing::{debug, info};
 
@@ -29,9 +29,21 @@ struct Args {
     /// Display verbose output
     verbose: bool,
 
+    /// run `git remote prune <upstream>` before scanning
+    #[clap(short, long, required = false)]
+    upstream: Option<String>,
+
+    /// SSH key in `~/.ssh/`` to use for authentication with remote, defaults to `id_rsa`
+    #[clap(short, long, required = false)]
+    ssh_key: Option<String>,
+
     #[clap(short('x'), long, default_value = "false")]
     /// Execute the branch deletion
     execute: bool,
+
+    /// Root directory of the git repository
+    #[clap(required = false)]
+    root: Option<String>,
 }
 
 fn main() -> Result<()> {
@@ -51,12 +63,34 @@ fn main() -> Result<()> {
         .event_format(format)
         .init();
 
+    let repository = Repository::discover(args.root.as_deref().unwrap_or("."))?;
+
+    if let Some(upstream) = &args.upstream {
+        debug!("Finding upstream {upstream}");
+        let mut callbacks = git2::RemoteCallbacks::new();
+        callbacks.credentials(|_url, username_from_url, _allowed_types| {
+            let key_name = args.ssh_key.as_deref().unwrap_or("id_rsa");
+            Cred::ssh_key(
+                username_from_url.unwrap(),
+                None,
+                std::path::Path::new(&format!("{}/.ssh/{key_name}", env::var("HOME").unwrap())),
+                None,
+            )
+        });
+        let mut remote = repository.find_remote(upstream)?;
+        remote.connect_auth(git2::Direction::Fetch, Some(callbacks), None)?;
+        debug!(
+            "Pruning remote {upstream} {}",
+            remote.url().unwrap_or_default()
+        );
+        remote.prune(None)?;
+    }
+
     debug!("Scanning Repository");
 
     let dry_run = !args.execute;
     let deleted = AtomicU8::new(0);
 
-    let repository = Repository::discover(".")?;
     let branches = repository
         .get_branches()
         .into_iter()
