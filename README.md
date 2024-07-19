@@ -34,3 +34,6 @@ This is a dry run that prints out which branches will be deleted.
 ```
 
 Delete the branches
+
+```
+> git superprune -h
