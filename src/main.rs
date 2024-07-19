@@ -30,11 +30,11 @@ struct Args {
     verbose: bool,
 
     /// run `git remote prune <upstream>` before scanning
-    #[clap(short, long, required = false)]
+    #[clap(short, long, required = false, env = "SUPERPRUNE_UPSTREAM_REMOTE")]
     upstream: Option<String>,
 
     /// SSH key in `~/.ssh/`` to use for authentication with remote, defaults to `id_rsa`
-    #[clap(short, long, required = false)]
+    #[clap(short, long, required = false, env = "SUPERPRUNE_SSH_KEY")]
     ssh_key: Option<String>,
 
     #[clap(short('x'), long, default_value = "false")]

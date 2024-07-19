@@ -37,3 +37,18 @@ Delete the branches
 
 ```
 > git superprune -h
+Prune local branches that no longer exist on the remote
+
+Usage: git-superprune [OPTIONS] [ROOT]
+
+Arguments:
+  [ROOT]  Root directory of the git repository
+
+Options:
+  -v, --verbose              Display verbose output
+  -u, --upstream <UPSTREAM>  run `git remote prune <upstream>` before scanning [env: SUPERPRUNE_UPSTREAM_REMOTE=origin]
+  -s, --ssh-key <SSH_KEY>    SSH key in `~/.ssh/`` to use for authentication with remote, defaults to `id_rsa` [env: SUPERPRUNE_SSH_KEY=]
+  -x, --execute              Execute the branch deletion
+  -h, --help                 Print help
+  -V, --version              Print version
+```
