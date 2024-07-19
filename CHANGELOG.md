@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/graysonarts/git-superprune/compare/v0.1.5...v0.1.6) - 2024-07-19
+
+### Added
+- add env configuration for upstream and ssh key ([#14](https://github.com/graysonarts/git-superprune/pull/14))
+
 ## [0.1.5](https://github.com/graysonarts/git-superprune/compare/v0.1.4...v0.1.5) - 2024-07-19
 
 ### Other
