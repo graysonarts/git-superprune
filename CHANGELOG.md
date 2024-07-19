@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/graysonarts/git-superprune/compare/v0.1.3...v0.1.4) - 2024-07-19
+
+### Other
+- use the automatic github token ([#9](https://github.com/graysonarts/git-superprune/pull/9))
+
 ## [0.1.3](https://github.com/graysonarts/git-superprune/compare/v0.1.2...v0.1.3) - 2024-07-18
 
 ### Other
