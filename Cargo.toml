@@ -1,6 +1,6 @@
 [package]
 name = "git-superprune"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 license = "MIT"
 description = "A tool to prune merged remote branches from the local repository."
