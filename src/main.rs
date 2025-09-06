@@ -94,7 +94,7 @@ fn main() -> Result<()> {
     let branches = repository
         .get_branches()
         .into_iter()
-        .map(|b| {
+        .inspect(|b| {
             debug!("Checking branch: {}", b.name);
             b
         })
