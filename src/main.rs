@@ -96,7 +96,6 @@ fn main() -> Result<()> {
         .into_iter()
         .inspect(|b| {
             debug!("Checking branch: {}", b.name);
-            b
         })
         .filter(|b| b.gone);
     for branch in branches {
