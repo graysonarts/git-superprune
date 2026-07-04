@@ -6,7 +6,7 @@ use color_eyre::Result;
 use const_format::formatcp;
 use git2::{Cred, Repository};
 use git_version::git_version;
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 mod branch;
 
@@ -94,9 +94,8 @@ fn main() -> Result<()> {
     let branches = repository
         .get_branches()
         .into_iter()
-        .map(|b| {
+        .inspect(|b| {
             debug!("Checking branch: {}", b.name);
-            b
         })
         .filter(|b| b.gone);
     for branch in branches {
@@ -104,10 +103,15 @@ fn main() -> Result<()> {
             info!("Would delete branch: {}", branch.name);
             deleted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         } else {
-            let mut git_branch = repository.find_branch(&branch.name, git2::BranchType::Local)?;
-            git_branch.delete()?;
-            info!("Deleted branch: {}", branch.name);
-            deleted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            match delete_branch(&repository, &branch.name) {
+                Ok(()) => {
+                    info!("Deleted branch: {}", branch.name);
+                    deleted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                }
+                // Don't let one undeletable branch (e.g. checked out in a linked
+                // worktree) abort the whole run — skip it and keep pruning.
+                Err(e) => warn!("Skipping branch {}: {}", branch.name, e),
+            }
         }
     }
 
@@ -128,5 +132,48 @@ fn main() -> Result<()> {
         );
     }
 
+    Ok(())
+}
+
+/// Delete a local branch, tolerating multivar config entries.
+///
+/// `git2::Branch::delete` (libgit2's `git_branch_delete`) removes the
+/// `[branch "<name>"]` config section before deleting the ref. That removal
+/// fails with `entry is not unique due to being a multivar` when tools such as
+/// the GitHub CLI (`github-pr-owner-number`) or VS Code (`vscode-merge-base`)
+/// have written duplicate keys into the section. When that happens we clean up
+/// the config ourselves in a multivar-safe way and delete the ref directly.
+fn delete_branch(repository: &Repository, name: &str) -> Result<()> {
+    let mut branch = repository.find_branch(name, git2::BranchType::Local)?;
+    match branch.delete() {
+        Ok(()) => Ok(()),
+        Err(e) if e.class() == git2::ErrorClass::Config => {
+            debug!("Branch delete hit multivar config, cleaning up manually: {e}");
+            remove_branch_config(repository, name)?;
+            branch.into_reference().delete()?;
+            Ok(())
+        }
+        Err(e) => Err(e.into()),
+    }
+}
+
+/// Remove every config entry under the `[branch "<name>"]` section, including
+/// multivar (duplicate) keys that `git_config_delete_entry` refuses to remove.
+fn remove_branch_config(repository: &Repository, name: &str) -> Result<()> {
+    let mut config = repository.config()?;
+    let pattern = format!("^branch\\.{}\\.", regex::escape(name));
+
+    let mut keys = std::collections::HashSet::new();
+    config.entries(Some(&pattern))?.for_each(|entry| {
+        if let Some(key) = entry.name() {
+            keys.insert(key.to_string());
+        }
+    })?;
+
+    for key in keys {
+        // `remove_multivar` with a match-all value regex clears the key whether
+        // it holds one value or many, unlike `remove`, which errors on multivars.
+        config.remove_multivar(&key, ".*")?;
+    }
     Ok(())
 }
