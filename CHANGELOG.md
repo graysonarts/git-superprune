@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8](https://github.com/graysonarts/git-superprune/compare/v0.1.7...v0.1.8) - 2026-07-05
+
+### Fixed
+
+- update deps and CI for current rust ecosystem ([#20](https://github.com/graysonarts/git-superprune/pull/20))
+- tolerate multivar config entries and undeletable branches when pruning ([#16](https://github.com/graysonarts/git-superprune/pull/16))
+
 ## [0.1.7](https://github.com/graysonarts/git-superprune/compare/v0.1.6...v0.1.7) - 2025-09-05
 
 ### Other
