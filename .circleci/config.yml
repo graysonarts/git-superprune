@@ -21,7 +21,7 @@ commands:
 jobs:
   install_tools:
     docker:
-      - image: cimg/rust:1.79.0
+      - image: cimg/rust:1.96
     steps:
       - checkout
       - restore_cache:
@@ -43,19 +43,19 @@ jobs:
             - ~/.cargo
   check:
     docker:
-      - image: cimg/rust:1.79.0
+      - image: cimg/rust:1.96
     steps:
       - cargo_step:
           args: check
   audit:
     docker:
-      - image: cimg/rust:1.79.0
+      - image: cimg/rust:1.96
     steps:
       - cargo_step:
           args: audit
   deny:
     docker:
-      - image: cimg/rust:1.79.0
+      - image: cimg/rust:1.96
     steps:
       - cargo_step:
           args: deny check
