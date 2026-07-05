@@ -12,7 +12,7 @@ clap = { version = "4.5.7", features = ["derive", "color", "env"] }
 color-eyre = "0.6.3"
 const_format = "0.2.32"
 git-version = "0.3.9"
-git2 = { version = "0.18.3", features = [
+git2 = { version = "0.20.4", features = [
 	"vendored-libgit2",
 	"vendored-openssl",
 ] }
