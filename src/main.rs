@@ -165,7 +165,7 @@ fn remove_branch_config(repository: &Repository, name: &str) -> Result<()> {
 
     let mut keys = std::collections::HashSet::new();
     config.entries(Some(&pattern))?.for_each(|entry| {
-        if let Some(key) = entry.name() {
+        if let Ok(key) = entry.name() {
             keys.insert(key.to_string());
         }
     })?;
