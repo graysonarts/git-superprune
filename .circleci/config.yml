@@ -47,6 +47,12 @@ jobs:
     steps:
       - cargo_step:
           args: check
+  test:
+    docker:
+      - image: cimg/rust:1.96
+    steps:
+      - cargo_step:
+          args: test
   audit:
     docker:
       - image: cimg/rust:1.96
@@ -70,5 +76,8 @@ workflows:
           requires:
             - install_tools
       - check:
+          requires:
+            - install_tools
+      - test:
           requires:
             - install_tools
