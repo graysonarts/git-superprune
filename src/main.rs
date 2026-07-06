@@ -177,3 +177,30 @@ fn remove_branch_config(repository: &Repository, name: &str) -> Result<()> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use git2::Version;
+
+    /// Regression: `--upstream`/`SUPERPRUNE_UPSTREAM_REMOTE` connects to remotes
+    /// with `Cred::ssh_key`. git2 0.21's default feature set is empty, so unless
+    /// the `ssh` feature is enabled the vendored libgit2 links no libssh2 and any
+    /// `git@host:...` origin fails with `unsupported URL protocol; class=Net (12)`.
+    #[test]
+    fn should_link_ssh_transport_into_libgit2() {
+        assert!(
+            Version::get().ssh(),
+            "libgit2 built without SSH transport; enable the git2 `ssh` feature in Cargo.toml"
+        );
+    }
+
+    /// Same failure class for `https://` remotes: the `https` feature must stay
+    /// enabled so an HTTPS upstream can be connected instead of erroring out.
+    #[test]
+    fn should_link_https_transport_into_libgit2() {
+        assert!(
+            Version::get().https(),
+            "libgit2 built without HTTPS transport; enable the git2 `https` feature in Cargo.toml"
+        );
+    }
+}
