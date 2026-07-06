@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9](https://github.com/graysonarts/git-superprune/compare/v0.1.8...v0.1.9) - 2026-07-06
+
+### Fixed
+
+- enable ssh/https transports so --upstream can reach remotes ([#22](https://github.com/graysonarts/git-superprune/pull/22))
+
 ## [0.1.8](https://github.com/graysonarts/git-superprune/compare/v0.1.7...v0.1.8) - 2026-07-05
 
 ### Fixed
